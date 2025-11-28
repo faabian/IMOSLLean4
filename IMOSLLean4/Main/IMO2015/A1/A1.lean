@@ -60,7 +60,9 @@ theorem final_solution [Field F] [LinearOrder F] [IsStrictOrderedRing F]
         ← le_sub_iff_add_le', ← mul_one_sub, ← sub_nonneg, ← sub_mul]
       refine mul_nonneg (sub_nonneg.mpr (h3.trans ?_)) (sub_nonneg.mpr h3)
       exact Nat.one_le_cast.mpr (one_le_two.trans h1)
-    · clear h1 h2 h3; induction' n with n n_ih
-      · rw [Nat.cast_zero, sum_range_zero, zero_div]
-      · rw [sum_range_succ, add_comm _ (a n)]
+    · clear h1 h2 h3
+      induction n with
+      | zero => rw [Nat.cast_zero, sum_range_zero, zero_div]
+      | succ n n_ih =>
+        rw [sum_range_succ, add_comm _ (a n)]
         refine (h0 n).trans (add_le_add_left n_ih (a n))

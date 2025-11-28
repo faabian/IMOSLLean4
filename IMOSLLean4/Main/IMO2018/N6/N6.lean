@@ -30,9 +30,11 @@ lemma PNat_exists_greatest_infinite_fiber {f : ℕ+ → ℕ+} (h : ∃ N, ∀ n,
   suffices ∀ M N, ∃ n ≥ N, M ≤ f n by
     intro N; obtain ⟨n, -, hn⟩ := this (N + 1) 1
     exact ⟨n, PNat.add_one_le_iff.mp hn⟩
-  intro M; induction' M using PNat.recOn with M M_ih
-  · intro N; exact ⟨N, le_refl N, (f N).one_le⟩
-  · by_contra! h0; rcases h0 with ⟨K, hK⟩
+  intro M
+  induction M using PNat.recOn with
+  | one => intro N; exact ⟨N, le_refl N, (f N).one_le⟩
+  | succ M M_ih =>
+    by_contra! h0; rcases h0 with ⟨K, hK⟩
     have h0 (N) : ∃ n ≥ N, f n = M := by
       obtain ⟨n, hn, h1⟩ := M_ih (N + K)
       exact ⟨n, (N.lt_add_right K).le.trans hn,
@@ -235,8 +237,9 @@ theorem dvd_map_dvd_map_mul_add_imp {f : GoodFun ℕ+} {M : ℕ}
     (h : M ∣ f d) (h0 : M ∣ f (d * (m + k))) : M ∣ f (d * m) := by
   have h1 {m} (h1 : M ∣ f (d * (m + 1))) : M ∣ f (d * m) := by
     rw [mul_add_one, add_comm] at h1; exact dvd_map_add_imp_iff h1 h
-  induction' k using PNat.caseStrongInductionOn with k k_ih
-  exacts [h1 h0, k_ih _ (le_refl k) (h1 (add_assoc m k 1 ▸ h0))]
+  induction k using PNat.caseStrongInductionOn with
+  | hz => exact h1 h0
+  | hi k k_ih => exact k_ih _ (le_refl k) (h1 (add_assoc m k 1 ▸ h0))
 
 theorem dvd_map_dvd_map_mul_imp {f : GoodFun ℕ+} {M : ℕ}
     (h : M ∣ f d) (h0 : M ∣ f (d * k)) (h1 : m ≤ k) : M ∣ f (d * m) :=
@@ -248,7 +251,7 @@ theorem exists_dvd_dvd_imp {f : GoodFun ℕ+} {M : ℕ} (h : ∃ n, M ∣ f n) :
   let d := PNat.find h
   have d_spec : M ∣ f d := PNat.find_spec h
   refine ⟨d, d_spec, λ n hn ↦ ?_⟩
-  induction' n using PNat.strongInductionOn with n n_ih
+  induction n using PNat.strongInductionOn with | _ n n_ih =>
   obtain rfl | ⟨m, rfl⟩ : d = n ∨ ∃ m, m + d = n :=
     (PNat.find_min' h hn).eq_or_lt.imp_right λ h0 ↦ ⟨n - d, PNat.sub_add_of_lt h0⟩
   exacts [d.val.dvd_refl, Nat.dvd_add_self_right.mpr <| n_ih _ (m.lt_add_right d) <|

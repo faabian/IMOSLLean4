@@ -25,7 +25,7 @@ We follow Solution 1 of the
 namespace IMOSL
 namespace IMO2009N2
 
-open ArithmeticFunction
+open ArithmeticFunction Omega
 
 /-- Given `a, b ∈ ℕ`, `a + b` is even if and only if `a ≡ b (mod 2)`. -/
 theorem even_add_iff_mod_two_eq {a b : ℕ} : Even (a + b) ↔ a % 2 = b % 2 := by

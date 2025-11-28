@@ -138,6 +138,21 @@ omit [DecidableEq F] in
 theorem good_of_card_eq_31 (hF : q = 31) : good F :=
   ZMod31_is_good.of_RingEquiv (ZMod.ringEquivOfPrime F (by decide) hF)
 
+theorem composite_not_prime_power {n : ℕ} {p r : ℕ}
+    (hp : Nat.Prime p) (hr : Nat.Prime r) (hpq: p ≠ r) (hpn : p ∣ n) (hrn : r ∣ n) :
+    ¬ IsPrimePow n := by
+  intro H
+  simp [IsPrimePow] at H
+  rcases H with ⟨p0, hp0, k, hkpos, rfl⟩
+  have hp0' := Prime.nat_prime hp0
+  have hp_eq : p = p0 := by
+    have := Nat.Prime.dvd_of_dvd_pow hp hpn
+    exact (Nat.prime_dvd_prime_iff_eq hp hp0').mp this
+  have hr_eq : r = p0 := by
+    have := Nat.Prime.dvd_of_dvd_pow hr hrn
+    exact (Nat.prime_dvd_prime_iff_eq hr hp0').mp this
+  exact hpq (hp_eq.trans hr_eq.symm)
+
 /-- Final solution to the generalized version -/
 theorem final_solution_general : good F ↔ ¬q = 11 := by
   ---- As fields of cardinality `11` are not good, we now assume `q ≠ 11`.
@@ -162,6 +177,10 @@ theorem final_solution_general : good F ↔ ¬q = 11 := by
   · exact absurd h hF
   ---- If `k = 2`, then `q = 21`. Contradiction, as `21` is not a prime power.
   · replace h : IsPrimePow 21 := by simpa [h] using FiniteField.isPrimePow_card F
-    exact absurd h (by decide : ¬IsPrimePow 21)
+    have := composite_not_prime_power (by decide : Nat.Prime 3) (by decide : Nat.Prime 7)
+      (by decide) (by decide : 3 ∣ 21) (by decide : 7 ∣ 21)
+    exact absurd h this
+    -- exact absurd h (by native_decide)  -- works
+    -- exact absurd h (by decide : ¬IsPrimePow 21)  -- doesn't work??
   ---- If `k = 3`, then `q = 31`, which works.
   · exact good_of_card_eq_31 h

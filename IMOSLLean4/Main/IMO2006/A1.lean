@@ -6,6 +6,7 @@ Authors: Gian Cordana Sanjaya
 
 import Mathlib.Algebra.Order.Archimedean.Basic
 import IMOSLLean4.Extra.NatSequence.AntitoneConst
+import Mathlib.Algebra.Order.Ring.Cast
 
 /-!
 # IMO 2006 A1
@@ -80,7 +81,7 @@ theorem floor_f_abs_le_floor_abs (r : R) : |⌊f r⌋| ≤ |⌊r⌋| := by
   rcases le_total 0 r with hr | hr
   ---- Case 1: `r ≥ 0`
   · have hr2 : 0 ≤ ⌊r⌋ := Int.floor_nonneg.mpr hr
-    replace hr : (0 : R) ≤ ⌊r⌋ := Int.cast_nonneg.mpr hr2
+    replace hr : (0 : R) ≤ ⌊r⌋ := Int.cast_nonneg_iff.mpr hr2
     replace hr0 : 0 ≤ ⌊f r⌋ := Int.floor_nonneg.mpr (mul_nonneg hr hr0)
     rw [abs_of_nonneg hr2, abs_of_nonneg hr0, ← Int.cast_le (R := R)]
     exact (Int.floor_le (f r)).trans (mul_le_of_le_one_right hr hr1)

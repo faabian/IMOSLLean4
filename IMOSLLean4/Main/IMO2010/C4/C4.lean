@@ -85,15 +85,6 @@ theorem log2_monotone {m n : Nat} (h : m ≤ n) : m.log2 ≤ n.log2 :=
   | m + 1 => (Nat.le_log2 (Nat.pos_iff_ne_zero.mp (Nat.zero_lt_of_lt h))).mpr
       (Nat.le_trans (Nat.log2_self_le m.succ_ne_zero) h)
 
-theorem log2_two_pow : ∀ n : Nat, (2 ^ n).log2 = n
-  | 0 => by simp [Nat.pow_zero, Nat.log2]
-  | n + 1 => by rw [Nat.pow_succ, Nat.log2, Nat.mul_div_left _ Nat.two_pos,
-      log2_two_pow, if_pos (Nat.le_mul_of_pos_left 2 n.two_pow_pos)]
-
-
-
-
-
 /-! ### Iteration of `log2` -/
 
 def log2_iter (seed : Nat) : Nat → Nat
@@ -365,18 +356,18 @@ theorem final_solution :
     _ ≤ log2_iter (2 ^ (11 * M ^ M)) 16 := by
       refine log2_iter_monotone_seed (Nat.le_trans (Nat.div_le_self _ _) ?_) 16
       rw [Nat.pow_mul]; exact Nat.pow_le_pow_left hM (M ^ M)
-    _ = log2_iter (11 * M ^ M) 15 := by rw [log2_iter_succ, log2_two_pow]
+    _ = log2_iter (11 * M ^ M) 15 := by rw [log2_iter_succ, Nat.log2_two_pow]
     _ ≤ log2_iter (2 ^ (4 + 11 * M)) 15 := by
       refine log2_iter_monotone_seed ?_ 15
       rw [Nat.pow_add, Nat.pow_mul]
       exact Nat.mul_le_mul (Nat.le_add_right 11 5) (Nat.pow_le_pow_left hM M)
-    _ = log2_iter (4 + 11 * M) 14 := by rw [log2_iter_succ, log2_two_pow]
+    _ = log2_iter (4 + 11 * M) 14 := by rw [log2_iter_succ, Nat.log2_two_pow]
     _ ≤ log2_iter (2 ^ 15) 14 := by
       refine log2_iter_monotone_seed ?_ 14; calc
         _ ≤ 4 + 11 * 2 ^ 11 := Nat.add_le_add_left (Nat.mul_le_mul_left 11 hM) 4
         _ ≤ 2 ^ 15 := Nat.le_add_right 22532 10236
-    _ = log2_iter 15 13 := by rw [log2_iter_succ, log2_two_pow]
+    _ = log2_iter 15 13 := by rw [log2_iter_succ, Nat.log2_two_pow]
     _ ≤ log2_iter 15 3 := log2_antitone_iter 15 (Nat.le_add_right 3 10)
-    _ = log2_iter 3 2 := congrArg (log2_iter · 2) (by iterate 4 rw [Nat.log2]; simp)
-    _ = log2_iter 1 1 := congrArg (log2_iter · 1) (by iterate 2 rw [Nat.log2]; simp)
+    _ = log2_iter 3 2 := congrArg (log2_iter · 2) (by decide)
+    _ = log2_iter 1 1 := congrArg (log2_iter · 1) (by decide)
     _ = 0 := by rw [log2_iter, log2_iter, Nat.log2]; rfl

@@ -35,15 +35,18 @@ theorem exists_mem_ge_of_card {S : Finset ℕ} (hS : n + 1 ≤ S.card) : ∃ k �
 
 theorem card_choose_le_nat_sum (S : Finset ℕ) : S.card.choose 2 ≤ S.sum id := by
   ---- Induction on `|S|`, with the base case trivial
-  generalize hn : S.card = n; induction' n with n n_ih generalizing S
-  · exact Nat.zero_le _
-  ---- Start by writing `S = {m} ∪ T` for some `m ≥ n`
-  obtain ⟨m, T, rfl, hm, hm0⟩ : ∃ m T, insert m T = S ∧ n ≤ m ∧ m ∉ T := by
-    obtain ⟨m, hm, hm0⟩ := exists_mem_ge_of_card hn.ge
-    exact ⟨m, S.erase m, insert_erase hm, hm0, notMem_erase m S⟩
-  ---- Now `C(n, 2) ≤ T.sum id` by IH and `n ≤ m` gives the desired inequality
-  rw [sum_insert hm0]; refine Nat.add_le_add (n.choose_one_right.trans_le hm) (n_ih T ?_)
-  rwa [card_insert_of_notMem hm0, Nat.succ_inj] at hn
+  generalize hn : S.card = n
+  induction n generalizing S with
+  | zero =>
+   exact Nat.zero_le _
+  | succ n n_ih =>
+    ---- Start by writing `S = {m} ∪ T` for some `m ≥ n`
+    obtain ⟨m, T, rfl, hm, hm0⟩ : ∃ m T, insert m T = S ∧ n ≤ m ∧ m ∉ T := by
+      obtain ⟨m, hm, hm0⟩ := exists_mem_ge_of_card hn.ge
+      exact ⟨m, S.erase m, insert_erase hm, hm0, notMem_erase m S⟩
+    ---- Now `C(n, 2) ≤ T.sum id` by IH and `n ≤ m` gives the desired inequality
+    rw [sum_insert hm0]; refine Nat.add_le_add (n.choose_one_right.trans_le hm) (n_ih T ?_)
+    rwa [card_insert_of_notMem hm0, Nat.succ_inj] at hn
 
 theorem card_choose_le_sum_of_inj {f : ι → ℕ} (hf : f.Injective) (I : Finset ι) :
     I.card.choose 2 ≤ I.sum f := calc

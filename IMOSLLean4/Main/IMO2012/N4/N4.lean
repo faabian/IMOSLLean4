@@ -6,6 +6,7 @@ Authors: Gian Cordana Sanjaya
 
 import Mathlib.Data.Int.GCD
 import Mathlib.Data.Int.Interval
+import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Algebra.Order.Ring.Basic
 import Mathlib.Data.Nat.Cast.Order.Ring
 import Mathlib.Tactic.Ring

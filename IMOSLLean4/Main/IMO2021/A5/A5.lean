@@ -34,15 +34,17 @@ variable [AddCommMonoid M] [LinearOrder M] [IsOrderedAddMonoid M] {l : List M} (
 include hl
 
 lemma foldr_add_nonneg : 0 ≤ l.foldr (· + ·) 0 := by
-  induction' l with a l l_ih
-  · exact le_refl 0
-  · replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
+  induction l with
+  | nil => exact le_refl 0
+  | cons a l l_ih =>
+    replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
     exact add_nonneg hl.1 (l_ih hl.2)
 
 lemma foldr_add_pos (hl0 : ∃ x ∈ l, x ≠ 0) : 0 < l.foldr (· + ·) 0 := by
-  induction' l with a l l_ih
-  · exact hl0.elim λ c h ↦ absurd h.1 List.not_mem_nil
-  · replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
+  induction l with
+  | nil => exact hl0.elim λ c h ↦ absurd h.1 List.not_mem_nil
+  | cons a l l_ih =>
+    replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
     simp only [List.mem_cons, exists_eq_or_imp] at hl0
     rcases hl0 with h | h
     exacts [add_pos_of_pos_of_nonneg (hl.1.lt_of_ne h.symm) (foldr_add_nonneg hl.2),
@@ -108,9 +110,10 @@ lemma targetSumPair_replicate_zero : ∀ n, targetSumPair r (List.replicate n 0)
 theorem targetSumPair_main_ineq [LinearOrder F] [IsStrictOrderedRing F] {l : List F}
     (hl : ∀ x ∈ l, 0 ≤ x) {r : F} (hr : l.foldr (· + ·) 0 ≤ r) :
     (targetSumPair r l).1 ≤ ((l.foldr (· + ·) 0) ^ 3 - l.foldr (· ^ 3 + ·) 0) / (3 * r) := by
-  induction' l with a l l_ih generalizing r
-  · rw [List.foldr, List.foldr, sub_zero, pow_succ', zero_mul, zero_div, targetSumPair_nil]
-  · replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
+  induction l generalizing r with
+  | nil => rw [List.foldr, List.foldr, sub_zero, pow_succ', zero_mul, zero_div, targetSumPair_nil]
+  | cons a l l_ih =>
+    replace hl : 0 ≤ a ∧ ∀ x ∈ l, 0 ≤ x := List.forall_mem_cons.mp hl
     let s : F := (targetSumPair r l).2
     have h : s = l.foldr (· + ·) 0 := targetSumPair_snd_eq r l
     calc

@@ -169,7 +169,8 @@ theorem nonempty_of_sum_le {N : ℕ} (h : (map (λ x : ℕ ↦ (x : ℚ)⁻¹) C
     Nonempty (CapeTownPartition N C) := by
   ---- Formally running the steps would consist of strong induction on `|C|`
   generalize hK : card C = K
-  induction' K using Nat.strong_induction_on with K K_ih generalizing C N
+  induction K using Nat.strong_induction_on generalizing C N with
+  | h  K K_ih => 
   subst hK
   ---- 1. Resolve case: `0 ∈ C`
   by_cases hC : 0 ∈ C

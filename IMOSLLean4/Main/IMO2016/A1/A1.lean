@@ -25,9 +25,10 @@ open Multiset
 theorem ring_prod_le_pow_card [CommSemiring R] [PartialOrder R] [IsOrderedRing R]
     {M : Multiset R} (hM : ∀ x ∈ M, 0 ≤ x) (hr : ∀ x ∈ M, x ≤ r) :
     M.prod ≤ r ^ card M := by
-  induction' M using Multiset.induction with a M M_ih
-  · rw [prod_zero, card_zero, pow_zero]
-  · rw [prod_cons, card_cons, pow_succ']
+  induction M using Multiset.induction with
+  | empty => rw [prod_zero, card_zero, pow_zero]
+  | cons a M M_ih =>
+    rw [prod_cons, card_cons, pow_succ']
     rw [forall_mem_cons] at hM hr
     exact mul_le_mul hr.1 (M_ih hM.2 hr.2) (prod_nonneg hM.2) (hM.1.trans hr.1)
 
@@ -63,9 +64,12 @@ theorem final_solution {M : Multiset R} (hM : ∀ x ∈ M, 0 ≤ x) :
     (M.map (· ^ 2 + c)).prod ≤ (r ^ 2 + c) ^ (card M) := by
   ---- Proceed by structural induction on `|M|`, clearing the base case first
   generalize hn : card M = n
-  revert hM hn M; induction' n with n n_ih
-  · rintro M - hM0 _ - - _ -
+  revert hM hn M
+  induction n with
+  | zero =>
+    rintro M - hM0 _ - - _ -
     rw [card_eq_zero.mp hM0, Multiset.map_zero, prod_zero, pow_zero]
+  | succ n n_ih =>
   intro M hM hn c hc hc0 r hr
   ---- Next, clear the case where all elements of `|M|` are `≤ r`
   rcases em (∀ x ∈ M, x ≤ r) with h | h

@@ -128,13 +128,15 @@ theorem final_solution : ∀ k : ℕ, 0 ≤ S k := by
     · rw [← Int.add_right_neg 1]
       exact add_le_add h ((x k).rec (neg_le_self zero_le_one) (-1).le_refl)
   ---- Now show that `x_k = ff` whenever `S_k = 0`, using strong induction
-  intro k h; induction' k using Nat.strong_induction_on with k k_ih
+  intro k h
+  induction k using Nat.strong_induction_on with
+  | h k k_ih =>
   obtain ⟨q, r, h0, rfl⟩ : ∃ q r : ℕ, r < 4 ∧ 4 * q + r = k :=
     ⟨k / 4, k % 4, Nat.mod_lt k four_pos, Nat.div_add_mod k 4⟩
   rw [S_four_mul_add_eq_zero_iff q h0, or_comm] at h
-  clear h0; rcases h with ⟨h, rfl | rfl⟩
-  · rw [x_mul4_add2]
-    exact k_ih q (lt_add_of_le_of_pos (Nat.le_mul_of_pos_left _ four_pos) two_pos) h
+  clear h0 ; rcases h with ⟨h, rfl | rfl⟩
+  rw [x_mul4_add2]
+  exact k_ih q (lt_add_of_le_of_pos (Nat.le_mul_of_pos_left _ four_pos) two_pos) h
   rcases q.eq_zero_or_pos with (rfl | h0)
   rw [add_zero, MulZeroClass.mul_zero, x_zero]
   replace k_ih := k_ih q (lt_mul_left h0 <| Nat.succ_lt_succ <| Nat.succ_pos 2) h
@@ -144,7 +146,8 @@ theorem final_solution : ∀ k : ℕ, 0 ≤ S k := by
 /-- Final solution for the extra part -/
 theorem final_solution_extra (k : ℕ) :
     S k = 0 ↔ ∀ c ∈ Nat.digits 4 k, c = 0 ∨ c = 2 := by
-  induction' k using Nat.strong_induction_on with k k_ih
+  induction k using Nat.strong_induction_on with
+  | h k k_ih =>
   obtain ⟨q, r, h, rfl⟩ : ∃ q r : ℕ, r < 4 ∧ 4 * q + r = k :=
     ⟨k / 4, k % 4, Nat.mod_lt k four_pos, Nat.div_add_mod k 4⟩
   rw [S_four_mul_add_eq_zero_iff q h]

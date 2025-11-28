@@ -9,7 +9,7 @@ package «IMOSLLean4» where
   -- add any additional package configuration options here
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"@"v4.26.0-rc1"
+  "https://github.com/leanprover-community/mathlib4.git"@"v4.25.1"
 
 @[default_target]
 lean_lib «IMOSLLean4» where

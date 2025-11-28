@@ -204,7 +204,7 @@ theorem card_mul_eq_unit [CommRing R] [Fintype R] [DecidableEq R] (r : Rˣ) :
   · rintro ⟨a, b⟩ h
     rw [mem_coe, mem_filter_univ] at h
     -- First lift `a` to a unit.
-    lift a to Rˣ using isUnit_of_mul_eq_one a (b * r⁻¹) (by rw [← mul_assoc, h, r.mul_inv])
+    lift a to Rˣ using IsUnit.of_mul_eq_one (b * r⁻¹) (by rw [← mul_assoc, h, r.mul_inv])
     refine ⟨a, mem_univ _, Prod.ext rfl ?_⟩
     -- Now it remains to show that `b = a⁻¹ r`.
     dsimp only; rw [Units.val_mul, ← h, Units.inv_mul_cancel_left]

@@ -40,20 +40,24 @@ variable {n : ℤ} {f : ι → ℤ} (h : ∀ i ∈ S, f i ≡ 1 [ZMOD n])
 include h
 
 theorem prod_one_modeq_one_mod : S.prod f ≡ 1 [ZMOD n] := by
-  induction' S using Finset.induction with i S h0 h1; rfl
-  rw [prod_insert h0, ← Int.mul_one 1]
-  exact (h i (mem_insert_self i S)).mul (h1 λ j h2 ↦ h j (mem_insert_of_mem h2))
+  induction S using Finset.induction with
+  | empty => rfl
+  | insert i S h0 h1 =>
+    rw [prod_insert h0, ← Int.mul_one 1]
+    exact (h i (mem_insert_self i S)).mul (h1 λ j h2 ↦ h j (mem_insert_of_mem h2))
 
 theorem prod_one_mod_add_card_modeq_sum_add_one :
     S.prod f + S.card ≡ S.sum f + 1 [ZMOD n ^ 2] := by
-  induction' S using Finset.induction with i S h0 h1; rfl
-  rw [prod_insert h0, sum_insert h0, card_insert_of_notMem h0,
-    Nat.cast_succ, ← add_assoc, add_right_comm]
-  have h2 (j : ι) (h2 : j ∈ S) : f j ≡ 1 [ZMOD n] := h j (mem_insert_of_mem h2)
-  have h3 := add_modeq_mul_add_one (h i (mem_insert_self i S)) (prod_one_modeq_one_mod h2)
-  refine (h3.symm.add_right _).trans ?_
-  rw [add_assoc, add_assoc]
-  exact (h1 h2).add_left _
+  induction S using Finset.induction with
+  | empty => rfl
+  | insert  i S h0 h1 =>
+    rw [prod_insert h0, sum_insert h0, card_insert_of_notMem h0,
+      Nat.cast_succ, ← add_assoc, add_right_comm]
+    have h2 (j : ι) (h2 : j ∈ S) : f j ≡ 1 [ZMOD n] := h j (mem_insert_of_mem h2)
+    have h3 := add_modeq_mul_add_one (h i (mem_insert_self i S)) (prod_one_modeq_one_mod h2)
+    refine (h3.symm.add_right _).trans ?_
+    rw [add_assoc, add_assoc]
+    exact (h1 h2).add_left _
 
 theorem prod_one_mod_modeq_one_mod_sq (h0 : S.sum f ≡ S.card [ZMOD n ^ 2]) :
     S.prod f ≡ 1 [ZMOD n ^ 2] := by

@@ -24,7 +24,7 @@ namespace IMO2023N3
 lemma le_padicValNat_iff (ha : 1 < a) (hb : 0 < b) : n ≤ padicValNat a b ↔ a ^ n ∣ b :=
   padicValNat.padicValNat_eq_maxPowDiv ▸
     ⟨λ h ↦ Nat.pow_dvd_of_le_of_pow_dvd h (Nat.maxPowDiv.pow_dvd a b),
-    Nat.maxPowDiv.le_of_dvd ha hb⟩
+    Nat.maxPowDiv.le_of_dvd ha (Nat.ne_zero_of_lt hb)⟩
 
 lemma padicValNat_eq_iff (ha : 1 < a) (hb : 0 < b) :
     padicValNat a b = n ↔ a ^ n ∣ b ∧ ¬a ^ (n + 1) ∣ b := by

@@ -99,7 +99,7 @@ theorem rootiful_induction_of_nat_dvd_int (h0 : 1 < n) (h1 : ∀ k : ℕ, k < n 
 
 theorem rootiful_nat_subset (h0 : (0 : ℤ) ∈ S) (h1 : (1 : ℤ) ∈ S)
     (h2 : ∀ k : ℕ, 0 < k → ∃ N : ℤ, N ≠ 0 ∧ (k : ℤ) ∣ N ∧ N ∈ S) (k : ℕ) : (k : ℤ) ∈ S := by
-  induction' k using Nat.strong_induction_on with k h3
+  induction k using Nat.strong_induction_on with | h k h3
   match k with
   | 0 => exact h0
   | 1 => exact h1

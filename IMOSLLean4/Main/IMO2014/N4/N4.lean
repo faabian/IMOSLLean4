@@ -5,6 +5,8 @@ Authors: Gian Cordana Sanjaya
 -/
 
 import Mathlib.NumberTheory.Basic
+import Mathlib.Algebra.Order.Ring.Int
+import Mathlib.Data.Nat.Cast.Order.Ring
 
 /-!
 # IMO 2014 N4

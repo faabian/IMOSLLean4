@@ -5,6 +5,7 @@ Authors: Gian Cordana Sanjaya
 -/
 
 import Mathlib.Data.Finset.Card
+import Mathlib.Tactic.Cases
 
 /-!
 # IMO 2006 N7

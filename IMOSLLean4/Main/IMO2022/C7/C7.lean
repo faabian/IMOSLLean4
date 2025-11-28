@@ -10,6 +10,7 @@ import Mathlib.Data.Finset.Order
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Algebra.Order.Ring.Int
+import Mathlib.Algebra.Group.Finsupp
 
 /-!
 # IMO 2022 C7
@@ -141,16 +142,18 @@ theorem ofPreimage {S : Set (α → ℤ)} (hS : AddMaxClosed S) (i : α → β) 
 theorem Nat_Finsupp_mem_of_zero_single_mem [DecidableEq ι] {S : Set (ι → ℤ)}
     (hS : AddMaxClosed S) (hS0 : 0 ∈ S) (hS1 : ∀ i, ⇑(Finsupp.single i 1) ∈ S) :
     ∀ v : ι →₀ ℕ, Nat.cast ∘ v ∈ S := by
-  intro v; induction' v using Finsupp.induction_linear with f g hf hg i k
-  · exact hS0
-  · exact hS.add_mem _ hf _ hg
-  · obtain rfl | h : k = 0 ∨ 0 < k := k.eq_zero_or_pos
+  intro v
+  induction v using Finsupp.induction_linear with
+  | zero => exact hS0
+  | add f g hf hg => exact hS.add_mem _ hf _ hg
+  | single i k =>
+    obtain rfl | h : k = 0 ∨ 0 < k := k.eq_zero_or_pos
     · rw [Finsupp.single_zero]; exact hS0
     · have h0 : (Nat.cast : ℕ → ℤ) ∘ ⇑(Finsupp.single i k) = k • ⇑(Finsupp.single i 1) := by
         funext j; rw [Function.comp_apply, Pi.smul_apply, nsmul_eq_mul]
         obtain rfl | h0 : i = j ∨ i ≠ j := eq_or_ne i j
         · rw [Finsupp.single_eq_same, Finsupp.single_eq_same, mul_one]
-        · rw [Finsupp.single_eq_of_ne h0, Finsupp.single_eq_of_ne h0, mul_zero]; rfl
+        · rw [Finsupp.single_eq_of_ne h0.symm, Finsupp.single_eq_of_ne h0.symm, mul_zero]; rfl
       exact h0 ▸ hS.smul_mem_of_pos (hS1 i) k h
 
 
